@@ -3,14 +3,15 @@ require('dotenv').config();
 
 const express = require('express')
 const { ClickHouse } = require('clickhouse');
+const { nanoid } = require('nanoid');
 const redis = require("redis");
 const bodyParser = require('body-parser')
 /*************************************************/
 const app = express();
 app.use(express.static('public'));
-app.use(bodyParser.json()); 
-app.use(bodyParser.urlencoded({ 
-  extended: true
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended: true
 }));
 
 /*************************************************/
@@ -21,7 +22,7 @@ const redisClient = redis.createClient({
     // eslint-disable-next-line no-undef
     url: process.env.REDIS_URL
 });
-redisClient.on("error", function(error) {
+redisClient.on("error", function (error) {
     console.log("reddis error:", error);
 });
 
@@ -50,11 +51,31 @@ redisClient.get("example_key", function (err, reply) {
 
 app.post('/v1/send', (req, res) => {
     console.log('Got body:', req.body);
-    res.send({
-        status: `ok`
-    });
+    const { data } = req.body;
+    try {
+        const json = JSON.parse(data);
+        const id = nanoid();
+        redisClient.set(id, JSON.stringify(json), function (err, reply) {
+            console.log("redis reply:", reply);
+            redisClient.dbsize(function (err, dbsize) {
+                console.log("redis dbsize", dbsize);
+                res.send({
+                    status: `ok`,
+                    id: id,
+                    dbsize: dbsize
+                });
+            });
+        });
+
+    } catch (ex) {
+        console.log("error", ex);
+        res.send({
+            status: 'error',
+            error: ex.toString()
+        })
+    }
 });
-  
+
 // eslint-disable-next-line no-undef
 app.listen(process.env.HTTP_PORT, () => {
     // eslint-disable-next-line no-undef
