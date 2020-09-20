@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+#svelte build folder, forget to exclude it on start, meh
+/public/build/

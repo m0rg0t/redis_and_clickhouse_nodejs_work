@@ -49,10 +49,41 @@ redisClient.get("example_key", function (err, reply) {
 });
 /*************************************************/
 
+const clearRedisDb = async () => {
+    const result = new Promise((resolve, reject) => {
+        redisClient.flushdb(function (err, succeeded) {
+            console.log(succeeded); // will be true if successfull
+            if (!err) {
+                resolve(succeeded);
+            } else {
+                reject(err);
+            }
+        });
+    });
+    return result;
+}
+
+app.get('/v1/clearRedisDb', async (req, res) => {
+    try {
+        let result = clearRedisDb();
+        res.send({
+            status: `ok`,
+            result: result
+        });
+    } catch (clearDBError) {
+        console.log("clearDBError", clearDBError);
+        res.send({
+            status: 'error',
+            error: clearDBError.toString()
+        })
+    }
+});
+
 app.post('/v1/send', (req, res) => {
     console.log('Got body:', req.body);
-    const { data } = req.body;
     try {
+        const { data } = req.body;
+
         const json = JSON.parse(data);
         const id = nanoid();
         redisClient.set(id, JSON.stringify(json), function (err, reply) {
