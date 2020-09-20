@@ -1,0 +1,24 @@
+{
+  "name": "redis_and_clickhouse_nodejs_work",
+  "version": "1.0.0",
+  "description": "Test nodejs app which communicate with redis and clickhouse databases",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m0rg0t/redis_and_clickhouse_nodejs_work.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/m0rg0t/redis_and_clickhouse_nodejs_work/issues"
+  },
+  "homepage": "https://github.com/m0rg0t/redis_and_clickhouse_nodejs_work#readme",
+  "dependencies": {
+    "clickhouse": "^2.1.5",
+    "express": "^4.17.1",
+    "redis": "^3.0.2"
+  }
+}
